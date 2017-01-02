@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+  body {
+      text-align: center;
+  }
+
+  textarea {
+      display: block;
+      text-align: left;
+
+      font-family: sans-serif;
+      line-height: 1.4;
+      color: #333;
+      text-shadow: 1px 1px 1px white;
+
+
+      border: 1px solid #ccd;
+      border-radius: .25em;
+      box-shadow: 2px 2px 4px #eef;
+
+      background: #eee;
+      margin: 1em auto .5em;
+      padding: .5em 1em;
+      min-width: 20em;
+      min-height: 6em;
+  }
+
+  button {
+      font-size: .9em;
+      font-weight: 700;
+      border: 1px solid #ccc;
+      color: white;
+      background: #aaa linear-gradient( transparent, #555 );
+      border-radius: .5em;
+      padding: .1em .4em;
+      cursor: pointer;
+      text-shadow: 0 -1px 0 #333;
+  }
+
+  button:focus, button:active, button:hover {
+      background-color: #ddd;
+  }
+  .debug button {
+    background: #bdcffb linear-gradient( transparent, #0e44c6 );
+  }
+  .debug button:focus, .debug button:active, .debug button:hover {
+      background-color: #eef;
+  }
+
+  #updates {
+    margin: 1em auto;
+    padding: .5em;
+    width: 60%;
+
+    border: 1px solid #eef;
+    border-radius: .25em;
+    background: #f0f0ff;
+
+    font-family: sans-serif;
+    text-align: left;
+  }
+  </style>
+</head>
+<body>
+  <textarea></textarea>
+  <button name="chat">Chitchat!</button>
+
+  <div id="updates"></div>
+  <button name="updates">Get bot updates!</button>
+
+  <script src="/cfg"></script>
+  <script>
+    "use strict";
+    const DEBUG = window.location.toString().match("#DEBUG");
+    const API = "https://crossorigin.me/https://api.telegram.org/bot"+BOT_ID+":"+ACCESS_TOKEN;
+
+    document.querySelector('button[name="chat"]').addEventListener('click', function(e) {
+      let msg = document.querySelector('textarea').value;
+
+      fetch(
+        API+"/sendMessage?chat_id="+(DEBUG ? CHAT_ID_DEBUG : CHAT_ID)+"&parse_mode=Markdown&text="
+        + encodeURIComponent(msg)
+      ).then(r => console.log(r))
+       .catch(e => console.error(e));
+    });
+
+    document.querySelector('button[name="updates"]').addEventListener('click', function(e) {
+      let msg = document.querySelector('textarea').value;
+
+      fetch(API+"/getUpdates")
+        .then(res => res.json(res))
+        .then(res => {
+          if (DEBUG) console.log(res);
+
+          document.getElementById("updates").innerHTML =
+            res.result.map(r => {
+              return "<p>New message from @"+r.message.from.username+" <em>(in "+r.message.chat.id+")</em>: "+r.message.text+"</p>"
+            }).join('');
+        })
+        .catch(e => console.error(e));
+    });
+
+
+    if (DEBUG) document.documentElement.className = "debug"
+  </script>
+</body>
