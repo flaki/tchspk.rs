@@ -4,25 +4,29 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 
 const calendar = require('./lib/calendar');
+const dates = require('./lib/dates');
+
+const cfpTwitter = require('./lib/cfp-twitter.js');
+const cfpTelegram = require('./lib/cfp-telegram.js');
 
 const CONFIG = require('./config.json');
 
 const DAYS_OF_WEEK = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 
 
-calendar.updateCfpData().then(cfp => {
-//Promise.resolve(calendar.getCfpDataSync()).then(cfp => {
-  let dayOfWeek = getDayOfWeek();
+//calendar.updateCfpData().then(cfp => {
+Promise.resolve(calendar.getCfpDataSync()).then(cfp => {
+  let dayOfWeek = dates.getDayOfWeek();
 
   // Optionally modify the NOW date
-  let shiftDate = 7;
+  let shiftDate = 0;
   if (shiftDate) {
     let shiftedDate = new Date().getTime()+24*60*60*1000*shiftDate;
 
     console.log('Using this date:', new Date(shiftedDate).toUTCString());
 
     cfp = calendar.getCfpDataSync(shiftedDate);
-    dayOfWeek = getDayOfWeek(shiftedDate);
+    dayOfWeek = dates.getDayOfWeek(shiftedDate);
   }
 
   // Weekly feed (every Sunday/Monday)
@@ -103,7 +107,7 @@ calendar.updateCfpData().then(cfp => {
     thisweek.forEach(e => {
       if (!~feed.indexOf(e)) {
         e.listedIn = 'thisweek';
-        e.closesOn = `on ${DAYS_OF_WEEK[getDayOfWeek(e.ts)-1]} (${e.daysToGoStr})`;
+        e.closesOn = `on ${DAYS_OF_WEEK[dates.getDayOfWeek(e.ts)-1]} (${e.daysToGoStr})`;
         feed.push(e);
       }
     });
@@ -113,9 +117,76 @@ calendar.updateCfpData().then(cfp => {
   if (!feed.length) {
 
   } else {
-    let msg = '';
+    let msg;
     let fullFeed = feed;
 
+
+    // Twitter
+    // close|end|due
+    msg = '📢 '+ feed.length+' CFPs close this week:\n';
+
+    // Add highlights
+    let firstItem = true;
+    feed.filter(e => e.listedIn === 'highlights').forEach(e => {
+      // Snip this event from the feed
+      feed = feed.filter(snip => e !== snip);
+
+      let eName, eExtra;
+      if (firstItem) {
+        firstItem = false;
+
+        eName = e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf;
+      } else {
+        eName = ', ' + (e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf);
+        if ((msg+eName).length > 132) return;
+      }
+
+      msg += eName;
+
+      // Extra info
+      eExtra = ` (due ${e.daysToGoStr})`;
+      if ( (msg+eExtra).length > 132 ) return;
+
+      msg += eExtra;
+    });
+
+    // Prefer events with twitter tags
+    //feed.sort( (a,b) => { console.log(a.parsed.twitter?1:0,b.parsed.twitter?1:0); return (a.parsed.twitter?1:0)-(b.parsed.twitter?1:0) });
+
+    // Fill up with the rest of the feed items
+    feed.forEach(e => {
+      // Snip this event from the feed
+      feed = feed.filter(snip => e !== snip);
+
+      let eName;
+      if (firstItem) {
+        firstItem = false;
+
+        eName += e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf;
+      } else {
+        eName = ', ' + (e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf);
+        if ((msg+eName).length > 132 && feed.length>0) return;
+      }
+
+      msg += eName;
+    });
+
+    // If there are more still
+    if (feed.length) {
+      msg += ' & more…';
+    } else {
+      if (msg.length<140) msg+='.';
+    }
+
+    // TODO: attach picture "calendar rendering" for the week
+
+    console.log(msg);
+    //sendTweet(msg,true);
+
+
+    // Telegram
+    msg = '';
+    feed = fullFeed;
     if (feed[0].listedIn === 'highlights') {
       msg += formatHighlight(feed[0]);
       feed = feed.slice(1);
@@ -140,18 +211,27 @@ calendar.updateCfpData().then(cfp => {
     }
 
     console.log(msg);
-    sendTelegram(msg);
+    //sendTelegram(msg,true);
   }
 
 }).catch(e => console.log(e.stack||e));
 
 
-function sendTelegram(msg) {
-  let chatId = CONFIG.TELEGRAM.CHAT_ID_DEBUG;
+function sendTweet(msg, test) {
+  if (test) {
+    console.log('TWEET TEST:', msg);
+    return;
+  }
+
+  cfpTwitter.tweet(msg).then(e => console.log('tweeted.'));
+}
+
+function sendTelegram(msg, test) {
+  let chatId = test ? CONFIG.TELEGRAM.CHAT_ID_DEBUG : CONFIG.TELEGRAM.CHAT_ID;
   let encodedMsg = encodeURIComponent(msg);
   let req = `${CONFIG.TELEGRAM.API_URL}bot${CONFIG.TELEGRAM.ACCESS_TOKEN}/sendMessage?chat_id=${chatId}&text=${encodedMsg}`;
 
-  console.log(req);
+  console.log('TELEGRAM'+(test?' TEST':'')+':', req);
   return fetch(req).catch(e => console.log(e.stack||e));
 }
 
@@ -161,6 +241,9 @@ function parseEvent(e) {
 
   // If "CFP" is not specified in the title itself, add it
   if (!~title.toUpperCase().indexOf('CFP')) title+=' CFP';
+
+  // Conf name without the "CFP" part
+  let conf = title.replace(/\s+CFP/,'').trim();
 
   // Is there an URL in the description?
   let url = e.description.match(/http[s]?\:\/\/\S+/);
@@ -172,7 +255,7 @@ function parseEvent(e) {
   let loc = e.summary.match(/\(([^\)]+)\)/);
 
   return ({
-    title, url, loc, twitter
+    title, conf, url, loc, twitter
   });
 }
 
@@ -192,11 +275,4 @@ function formatHighlight(e) {
     ret += `\n${url[0]}`;
   }
   return ret;
-}
-
-// Returns UTC Day of Week, Mo: 1, Su: 7
-function getDayOfWeek(ts) {
-  let d = ts ? new Date(ts) : new Date;
-
-  return (d.getUTCDay()+6) % 7 +1;
 }
