@@ -122,66 +122,78 @@ Promise.resolve(calendar.getCfpDataSync()).then(cfp => {
 
 
     // Twitter
-    // close|end|due
-    msg = '📢 '+ feed.length+' CFPs close this week:\n';
 
-    // Add highlights
-    let firstItem = true;
-    feed.filter(e => e.listedIn === 'highlights').forEach(e => {
-      // Snip this event from the feed
-      feed = feed.filter(snip => e !== snip);
+    // Weekly field (alt: close|end|due)
+    if (isWeeklyFeed) {
+      msg = '📢 '+ feed.length+' '+(feed.length>1 ?'CFPs close' :'CFP closes')+' this week:\n';
 
-      let eName, eExtra;
-      if (firstItem) {
-        firstItem = false;
+      // Add highlights
+      let firstItem = true;
+      let mainFeed = feed.length <= 2 ? feed : feed.filter(e => e.listedIn === 'highlights');
+      mainFeed.forEach(e => {
+        // Snip this event from the feed
+        feed = feed.filter(snip => e !== snip);
 
-        eName = e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf;
+        let eName, eExtra;
+        if (firstItem) {
+          firstItem = false;
+
+          eName = e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf;
+        } else {
+          eName = ', ' + (e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf);
+          if ((msg+eName).length > 132) return;
+        }
+
+        msg += eName;
+
+        // Extra info
+        eExtra = ` (due ${e.daysToGoStr})`;
+        if ( (msg+eExtra).length > 132 ) return;
+
+        msg += eExtra;
+      });
+
+      // Prefer events with twitter tags
+      //feed.sort( (a,b) => { console.log(a.parsed.twitter?1:0,b.parsed.twitter?1:0); return (a.parsed.twitter?1:0)-(b.parsed.twitter?1:0) });
+
+      // Fill up with the rest of the feed items
+      feed.forEach(e => {
+        // Snip this event from the feed
+        feed = feed.filter(snip => e !== snip);
+
+        let eName;
+        if (firstItem) {
+          firstItem = false;
+
+          eName = e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf;
+        } else {
+          eName = ', ' + (e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf);
+          let ml = (msg+eName).length;
+
+          if (ml > 140) return
+
+          // Last item, if it fits 140 chars leave it
+          if (!feed.length === 0 || ml > 140) return;
+
+          // Leave 8 chars for "& more..."
+          if (ml > 132) return;
+        }
+
+        msg += eName;
+      });
+
+      // If there are more still
+      if (feed.length) {
+        msg += ' & more…';
       } else {
-        eName = ', ' + (e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf);
-        if ((msg+eName).length > 132) return;
+        if (msg.length<140) msg+='.';
       }
 
-      msg += eName;
+      // TODO: attach picture "calendar rendering" for the week
 
-      // Extra info
-      eExtra = ` (due ${e.daysToGoStr})`;
-      if ( (msg+eExtra).length > 132 ) return;
-
-      msg += eExtra;
-    });
-
-    // Prefer events with twitter tags
-    //feed.sort( (a,b) => { console.log(a.parsed.twitter?1:0,b.parsed.twitter?1:0); return (a.parsed.twitter?1:0)-(b.parsed.twitter?1:0) });
-
-    // Fill up with the rest of the feed items
-    feed.forEach(e => {
-      // Snip this event from the feed
-      feed = feed.filter(snip => e !== snip);
-
-      let eName;
-      if (firstItem) {
-        firstItem = false;
-
-        eName += e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf;
-      } else {
-        eName = ', ' + (e.parsed.twitter ? e.parsed.twitter[1] : e.parsed.conf);
-        if ((msg+eName).length > 132 && feed.length>0) return;
-      }
-
-      msg += eName;
-    });
-
-    // If there are more still
-    if (feed.length) {
-      msg += ' & more…';
-    } else {
-      if (msg.length<140) msg+='.';
+      console.log(msg, [msg.length]);
+      //sendTweet(msg,true);
     }
-
-    // TODO: attach picture "calendar rendering" for the week
-
-    console.log(msg);
-    //sendTweet(msg,true);
 
 
     // Telegram
