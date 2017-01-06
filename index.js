@@ -23,9 +23,11 @@ Object.defineProperty(STATE.Q, 'sync', { value: function() {
 try {
   STATE.LD = require('./data/lastdate.json')
 } catch(e) { STATE.LD = { value: dates.getUTCDate('yesterday') } };
-Object.defineProperty(STATE.LD, 'next', { value: function() {
-  STATE.LD.value = dates.getUTCDate('tomorrow');
+Object.defineProperty(STATE.LD, 'reset', { value: function() {
+  STATE.LD.value = dates.getUTCDate('today');
   fs.writeFileSync('./data/lastdate.json', JSON.stringify(STATE.LD));
+
+  console.log('Last date updated: ', STATE.LD.value);
 }});
 
 // Mainloop loops every 60 seconds
@@ -45,7 +47,7 @@ function mainLoop() {
     loadQueue();
 
     // Increment state day reference
-    STATE.LD.next();
+    STATE.LD.reset();
   }
 
   // Send
