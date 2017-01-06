@@ -182,6 +182,8 @@ function enqueue(type, msgs) {
 }
 
 function sendTweet(msg, test) {
+  if (typeof test === 'undefined') test = CONFIG.DEBUG;
+
   if (test) {
     console.log('TWEET TEST:', msg);
     return;
@@ -191,6 +193,8 @@ function sendTweet(msg, test) {
 }
 
 function sendTelegram(msg, test) {
+  if (typeof test === 'undefined') test = CONFIG.DEBUG;
+
   let chatId = test ? CONFIG.TELEGRAM.CHAT_ID_DEBUG : CONFIG.TELEGRAM.CHAT_ID;
   let encodedMsg = encodeURIComponent(msg);
   let req = `${CONFIG.TELEGRAM.API_URL}bot${CONFIG.TELEGRAM.ACCESS_TOKEN}/sendMessage?chat_id=${chatId}&text=${encodedMsg}`;
