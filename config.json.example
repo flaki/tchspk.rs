@@ -1,19 +1,32 @@
 {
+  "DEBUG": false,
+  "PREVIEWS": true,
+
   "TELEGRAM": {
     "API_URL": "https://api.telegram.org/",
     "BOT_ID": "bot000000000",
     "ACCESS_TOKEN": "000000000:abcdefgh12345678-ABCDEFGH9876543210",
     "CHAT_ID": "12345",
     "CHAT_ID_DEBUG": "99999",
+
     "SEND_HOUR": 5,
     "SEND_MINS": 0
   },
-  "TWITTER": {
-    "API_KEY": "xxxx",
-    "API_SECRET": "abcdxxxx1233",
 
-    "ACCESS_TOKEN": "123456789012345678-xxxxx",
-    "ACCESS_TOKEN_SECRET": "abcdEFG123ABCD",
+  "TWITTER": {
+    "MAIN": {
+      "API_KEY": "xxxx",
+      "API_SECRET": "abcdxxxx1233",
+      "ACCESS_TOKEN": "123456789012345678-xxxxx",
+      "ACCESS_TOKEN_SECRET": "abcdEFG123ABCD"
+    },
+    "PREVIEW": {
+      "API_KEY": "xxxx",
+      "API_SECRET": "abcdxxxx1233",
+      "ACCESS_TOKEN": "123456789012345678-xxxxx",
+      "ACCESS_TOKEN_SECRET": "abcdEFG123ABCD"
+    },
+
     "SEND_HOUR": 6,
     "SEND_MINS": 0,
     "SEND_INTERVAL": 300

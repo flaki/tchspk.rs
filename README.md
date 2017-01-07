@@ -74,6 +74,34 @@ and the next day ("tomorrow").
 Most of this functionality comes from `lib/cfp-telegram.js`.
 
 
+### Configuration
+The app is configured via the `config.json` configuration file in the root
+directory of the app. To create your own `config.json` refer to the example
+file and fill in the keys and properties.
+
+A lot of the configuration is explained in the TinSpeaker experiment, refer
+to the docs below for more info.
+
+*Note: `CHAT_ID_DEBUG` is no longer used in the app, use `PREVIEWS` instead.*
+
+Different channels could be created inside the service configurations, these
+encode different accounts & configuration settings which later can be used for
+different purposes. Currently only the default channel (`MAIN`) and the preview
+channel (`PREVIEW`) is implemented, which is used by the Preview feature.
+
+Besides configuring the integrations (like Twitter or Telegram), the `config.json`
+has a few global options that control how the app behaves.
+
+* `DEBUG` = `true`/`false` - If true the app will only output things to the console,
+  but won't touch the integration API endpoints. Note that this doesn't apply to
+  the `PREVIEWS` feature (see below).
+* `PREVIEWS` = `true`/`false` - Uses the `PREVIEW` channel in the integrations
+  to share upcoming content for debugging purposes. For any integration that
+  has a `PREVIEW` channel set up with valid credentials tomorrow's content
+  will be shared one day early which allows for catching & fixing bugs
+  before they happen.
+
+
 ## _TinSpeaker_ experiment
 
 TinSpeaker is an experiment researching the features of the [Telegram API].
