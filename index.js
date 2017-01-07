@@ -1,7 +1,6 @@
 'use strict';
 
 const fs = require('fs');
-const fetch = require('node-fetch');
 
 const calendar = require('./lib/calendar');
 const dates = require('./lib/dates');
@@ -197,10 +196,6 @@ function sendTweet(msg, test) {
 function sendTelegram(msg, test) {
   if (typeof test === 'undefined') test = CONFIG.DEBUG;
 
-  let chatId = test ? CONFIG.TELEGRAM.CHAT_ID_DEBUG : CONFIG.TELEGRAM.CHAT_ID;
-  let encodedMsg = encodeURIComponent(msg);
-  let req = `${CONFIG.TELEGRAM.API_URL}bot${CONFIG.TELEGRAM.ACCESS_TOKEN}/sendMessage?chat_id=${chatId}&text=${encodedMsg}`;
 
-  console.log('TELEGRAM'+(test?' TEST':'')+':', req);
-  return fetch(req).catch(e => console.log(e.stack||e));
+  cfpTelegram.message(msg).then(e => console.log('Message sent.'))
 }
