@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+* ADDED add CFS to recognized designators in title (call for submissions)
+* FIXED weekly tweet overflow detection ("& more" tag wasn't added properly)
+
 ## 0.1.2
 * ADDED ability to send previews (special messages for tomorrow's content)
 * ADDED `PREVIEWS` config setting
