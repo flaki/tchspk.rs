@@ -12,6 +12,10 @@ const express = require('express');
 const app = express();
 
 
+// Portal modules - API
+app.use(require('./api'));
+
+
 // Print app version
 app.get('/version', require('./routes/version.js').all);
 

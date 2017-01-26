@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <title>Tech Speakers Map</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+        <link rel="stylesheet" href="assets/bootstrap.feedthefox.min.css" />
+        <link rel="stylesheet" href="assets/css/style.css" />
+        <link rel="stylesheet" href="//code.cdn.mozilla.net/fonts/fira.css">
+        <script src="assets/fetch/promise.min.js"></script>
+        <script src="assets/fetch/fetch.js"></script>
+        <link rel="stylesheet" href="assets/leaflet/leaflet.css" />
+        <script src="assets/leaflet/leaflet.js"></script>
+        <script src="assets/js/sorttable.js"></script>
+        <script src="assets/js/md5.js"></script>
+    </head>
+    <body>
+        <div class="header">
+            <h1><span class="counter"></span>Tech Speakers Map - <a href="https://github.com/Mte90/Tech-Speakers-Map">Add yourself!</a></h1>
+            <h3>Find your nearest Tech Speakers on the map or filter from the list in the bottom</h3>
+            <div id="map"></div>
+            <br>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <table id="list" class="sortable table col-lg-12">
+                    <thead>
+                        <tr>
+                            <td>Name <small>(click me)</small></td>
+                            <td>Country <small>(click me)</small></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="https://www.mozilla.org"><img class="footer-logo" src="https://www.mozilla.org/media/img/pebbles/moz-wordmark-light-reverse.cb1bdf6d1de6.svg" alt="mozilla"></a>
+                        <p class="license">
+                            Portions of this content are ©1998–2017 by individual mozilla.org contributors.<br> Content available under a
+                            <a href="https://www.mozilla.org/en-US/foundation/licensing/website-content/">Creative Commons license</a>.
+                        </p>
+                    </div>
+
+                    <div class="footer-license col-md-6">
+                        <div>This is a Tech Speakers little project with #mozlove for the tech world.</div>
+                        <br>
+                        <p>
+                            <a href="https://github.com/Mte90/Tech-Speakers-Map">Contribute to this map</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="assets/js/app.js"></script>
+    </body>
+</html>
