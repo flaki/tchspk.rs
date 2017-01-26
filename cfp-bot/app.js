@@ -51,7 +51,7 @@ function mainLoop() {
   if (d > STATE.LD.value) {
     // Preview next day's content on dev channels
     if (CFG.CFP_BOT.PREVIEWS) {
-      loadQueue({ shiftDate: 1, preview: true });
+      loadQueue({ shiftDate: CFG.CFP_BOT.PREVIEWS, preview: true });
     }
 
     // Today's events
