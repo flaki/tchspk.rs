@@ -1,6 +1,12 @@
 {
   "DEBUG": false,
   "PREVIEWS": true,
+  "PORTAL": {
+    "SERVER_HOST": "mts.slsw.hu",
+    "SERVER_PORT": 9999,
+
+    "SHORT_LINK_HOST": "tchspk.rs"
+  },
 
   "TELEGRAM": {
     "API_URL": "https://api.telegram.org/",

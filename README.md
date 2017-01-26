@@ -100,6 +100,11 @@ has a few global options that control how the app behaves.
   has a `PREVIEW` channel set up with valid credentials tomorrow's content
   will be shared one day early which allows for catching & fixing bugs
   before they happen.
+* `PORTAL` contains configuration specific to the portal module
+  * `SERVER_PORT` & `SERVER_HOST` are the internal interfaces the portal will
+    be bound to once started.
+  * `SHORT_LINK_HOST` is the host that is used by various services when they
+    are generating a shortened link.
 
 
 ## _TinSpeaker_ experiment
