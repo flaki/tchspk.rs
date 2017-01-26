@@ -1,6 +1,6 @@
 {
-  "name": "mts",
-  "version": "0.1.3",
+  "name": "tchspk.rs",
+  "version": "0.2.0",
   "description": "MozTechSpeakers Experiments",
   "main": "startup.js",
   "scripts": {
