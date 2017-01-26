@@ -1,3 +1,2 @@
-*.ics
-*.json
-*.dat
+*
+!.gitignore

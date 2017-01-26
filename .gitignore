@@ -2,8 +2,9 @@ node_modules
 .DS_Store
 npm-debug.log
 
-# Configuration file
-/config.json
+# Configuration files
+/*config.js
+/*config.json
 
 # Text notes
 .txt
