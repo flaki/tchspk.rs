@@ -1,6 +1,10 @@
 {
   "DEBUG": false,
-  "PREVIEWS": true,
+
+  "CFP_BOT": {
+    "PREVIEWS": true
+  },
+
   "PORTAL": {
     "SERVER_HOST": "mts.slsw.hu",
     "SERVER_PORT": 9999,

@@ -4,10 +4,13 @@ const ical = require('ical');
 const fs = require('fs');
 const path = require('path');
 
+const CFG = require('../cfg');
+
 const dates = require('./dates');
 
+// TODO: move the calendar url to config.json
 const CFP_CALENDAR_URL = 'https://calendar.google.com/calendar/ical/mozilla.com_tptb36ac7eijerilfnf6c1onfo%40group.calendar.google.com/public/basic.ics';
-const CFP_JSON_PATH = path.join(__dirname, '../data/cfp.json');
+const CFP_JSON_PATH = path.join(CFG.ROOT_DIR, 'data/cfp.json');
 
 const MONTHS = [
   'Jan', 'Feb', 'Mar',

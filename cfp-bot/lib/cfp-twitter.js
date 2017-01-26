@@ -2,7 +2,7 @@
 
 const twitter = require('twitter');
 
-const CONFIG = require('../config.json');
+const CFG = require('../cfg');
 
 const calendar = require('./calendar');
 
@@ -16,10 +16,10 @@ function getBackend() {
 }
 
 function setBackend(backend) {
-  let cfg = CONFIG.TWITTER.MAIN || CONFIG.TWITTER;
+  let cfg = CFG.TWITTER.MAIN || CFG.TWITTER;
 
-  if (backend && CONFIG.TWITTER[backend] && 'ACCESS_TOKEN' in CONFIG.TWITTER[backend]) {
-    cfg = CONFIG.TWITTER[backend];
+  if (backend && CFG.TWITTER[backend] && 'ACCESS_TOKEN' in CFG.TWITTER[backend]) {
+    cfg = CFG.TWITTER[backend];
     BACKEND = backend;
   }
 
@@ -35,7 +35,7 @@ function setBackend(backend) {
 function tweet(msg, backend) {
   let oldBackend;
   if (backend) {
-    if (!'ACCESS_TOKEN' in CONFIG.TWITTER[backend]) {
+    if (!'ACCESS_TOKEN' in CFG.TWITTER[backend]) {
       return Promise.reject(new Error('No such Twitter-backend configured: '+backend));
     }
 

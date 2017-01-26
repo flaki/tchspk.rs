@@ -1,38 +1,44 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 
 const calendar = require('./lib/calendar');
 const dates = require('./lib/dates');
 
-const cfpTwitter = require('./lib/cfp-twitter.js');
-const cfpTelegram = require('./lib/cfp-telegram.js');
+const cfpTwitter = require('./lib/cfp-twitter');
+const cfpTelegram = require('./lib/cfp-telegram');
 
-const CONFIG = require('./config.json');
+const CFG = require('./cfg');
 
 const STATE = {};
 
 try {
-  STATE.Q = require('./data/queue.json');
+  STATE.Q = require(CFG.DATA_STATE_Q);
 } catch(e) { STATE.Q = {} };
 Object.defineProperty(STATE.Q, 'sync', { value: function() {
-  fs.writeFileSync('./data/queue.json', JSON.stringify(STATE.Q,null,1));
+  fs.writeFileSync(CFG.DATA_STATE_Q, JSON.stringify(STATE.Q,null,1));
 }});
 
 try {
-  STATE.LD = require('./data/lastdate.json')
-} catch(e) { STATE.LD = { value: dates.getUTCDate('yesterday') } };
+  STATE.LD = require(CFG.DATA_STATE_LD);
+} catch(e) { STATE.LD = { 'value': dates.getUTCDate('yesterday') } };
 Object.defineProperty(STATE.LD, 'reset', { value: function() {
   STATE.LD.value = dates.getUTCDate('today');
-  fs.writeFileSync('./data/lastdate.json', JSON.stringify(STATE.LD));
+  fs.writeFileSync(CFG.DATA_STATE_LD, JSON.stringify(STATE.LD));
 
   console.log('Last date updated: ', STATE.LD.value);
 }});
 
 // Mainloop loops every 60 seconds
-setInterval(mainLoop, CONFIG.DEBUG ? 6000 : 60000);
+setInterval(mainLoop, CFG.DEBUG ? 6000 : 60000);
 
 mainLoop();
+
+console.log('[%s] Scheduler started. (v%s)',
+  CFG.APP_NAME,
+  CFG.APP_VERSION
+);
 
 
 
@@ -44,7 +50,7 @@ function mainLoop() {
   // Datechange event
   if (d > STATE.LD.value) {
     // Preview next day's content on dev channels
-    if (CONFIG.PREVIEWS) {
+    if (CFG.CFP_BOT.PREVIEWS) {
       loadQueue({ shiftDate: 1, preview: true });
     }
 
@@ -61,11 +67,11 @@ function mainLoop() {
 
     switch (e.t) {
       case 'twitter':
-        if (CONFIG.PREVIEWS && e.channel==='PREVIEW') test=e.channel;
+        if (CFG.CFP_BOT.PREVIEWS && e.channel==='PREVIEW') test=e.channel;
         sendTweet(e.msg, test);
         break;
       case 'telegram':
-        if (CONFIG.PREVIEWS && e.channel==='PREVIEW') test=e.channel;
+        if (CFG.CFP_BOT.PREVIEWS && e.channel==='PREVIEW') test=e.channel;
         sendTelegram(e.msg, test);
         break;
     }
@@ -128,7 +134,7 @@ function loadQueue(options) {
 
     } else {
       // Twitter
-      if (CONFIG.TWITTER) {
+      if (CFG.TWITTER) {
         let msgs = [];
 
         // Weekly tweet
@@ -145,7 +151,7 @@ function loadQueue(options) {
       }
 
       // Telegram
-      if (CONFIG.TELEGRAM) {
+      if (CFG.TELEGRAM) {
         let msg = cfpTelegram.makeMessage(events);
 
         console.log(msg);
@@ -170,7 +176,7 @@ function enqueue(type, msgs, options) {
   let ts;
   switch (type) {
     case 'twitter':
-      ts = dates.dateTimeUTC(undefined, undefined, undefined, undefined, CONFIG.TWITTER.SEND_HOUR, CONFIG.TWITTER.SEND_MINS);
+      ts = dates.dateTimeUTC(undefined, undefined, undefined, undefined, CFG.TWITTER.SEND_HOUR, CFG.TWITTER.SEND_MINS);
 
       msgs.forEach(msg => {
         let message = {
@@ -188,7 +194,7 @@ function enqueue(type, msgs, options) {
         q.push(message);
         console.log('Added to queue: ', message);
 
-        ts += CONFIG.TWITTER.SEND_INTERVAL;
+        ts += CFG.TWITTER.SEND_INTERVAL;
       });
 
       break;
@@ -197,7 +203,7 @@ function enqueue(type, msgs, options) {
       let message = {
         t: type,
         msg: msgs,
-        ts: dates.dateTimeUTC(undefined, undefined, undefined, undefined, CONFIG.TELEGRAM.SEND_HOUR, CONFIG.TELEGRAM.SEND_MINS)
+        ts: dates.dateTimeUTC(undefined, undefined, undefined, undefined, CFG.TELEGRAM.SEND_HOUR, CFG.TELEGRAM.SEND_MINS)
       };
 
       if (preview) {
@@ -217,11 +223,11 @@ function enqueue(type, msgs, options) {
 }
 
 function sendTweet(msg, test) {
-  if (typeof test === 'undefined') test = CONFIG.DEBUG;
+  if (typeof test === 'undefined') test = CFG.DEBUG;
 
   if (test) {
     // Send to preview channel
-    if (test === 'PREVIEW' && CONFIG.TWITTER.PREVIEW) {
+    if (test === 'PREVIEW' && CFG.TWITTER.PREVIEW) {
       cfpTwitter.tweet(msg, test).then(e => console.log('Tweet preview sent.'));
       return;
     }
@@ -235,11 +241,11 @@ function sendTweet(msg, test) {
 }
 
 function sendTelegram(msg, test) {
-  if (typeof test === 'undefined') test = CONFIG.DEBUG;
+  if (typeof test === 'undefined') test = CFG.DEBUG;
 
   if (test) {
     // Send to preview channel
-    if (test === 'PREVIEW' && CONFIG.TELEGRAM.PREVIEW) {
+    if (test === 'PREVIEW' && CFG.TELEGRAM.PREVIEW) {
       cfpTelegram.message(msg, test).then(e => console.log('Telegram preview sent.'));
       return;
     }

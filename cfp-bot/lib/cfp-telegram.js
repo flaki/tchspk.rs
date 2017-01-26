@@ -2,17 +2,17 @@
 
 const fetch = require('node-fetch');
 
-const CONFIG = require('../config.json');
+const CFG = require('../cfg');
 
 const calendar = require('./calendar');
 
 
 function message(msg, backend) {
-  let cfg = CONFIG.TELEGRAM.MAIN || CONFIG.TELEGRAM;
+  let cfg = CFG.TELEGRAM.MAIN || CFG.TELEGRAM;
 
   if (backend) {
-    if (CONFIG.TELEGRAM[backend] && 'CHAT_ID' in CONFIG.TELEGRAM[backend]) {
-      cfg = CONFIG.TELEGRAM[backend];
+    if (CFG.TELEGRAM[backend] && 'CHAT_ID' in CFG.TELEGRAM[backend]) {
+      cfg = CFG.TELEGRAM[backend];
     } else {
       return Promise.reject(new Error('No such Twitter-backend configured: '+backend));
     }

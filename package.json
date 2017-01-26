@@ -2,8 +2,11 @@
   "name": "mts",
   "version": "0.1.3",
   "description": "MozTechSpeakers Experiments",
-  "main": "index.js",
+  "main": "startup.js",
   "scripts": {
+    "serve:cfp-bot": "node cfp-bot/app.js",
+    "serve:portal": "node portal/app.js",
+    "start": "node startup.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
