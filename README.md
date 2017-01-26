@@ -106,6 +106,10 @@ has a few global options that control how the app behaves.
     be bound to once started.
   * `SHORT_LINK_HOST` is the host that is used by various services when they
     are generating a shortened link.
+  * `API_HOST` the host at which the API will be exposed.
+  * `API_VERSION` API version that will show up at the root of the URL.
+    Defaults to "1.0".
+
 
 
 ## _TinSpeaker_ experiment

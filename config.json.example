@@ -9,6 +9,9 @@
     "SERVER_HOST": "mts.slsw.hu",
     "SERVER_PORT": 9999,
 
+    "API_HOST": "api.tchspk.rs",
+    "API_VERSION": "1.0",
+
     "SHORT_LINK_HOST": "tchspk.rs"
   },
 

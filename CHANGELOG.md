@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.1
+2017/01/26: API support in the portal, integrated @Mte90's TechSpeakers Map.
+
+* ADDED API support in the portal module
+* ADDED https compatibility
+* ADDED TechSpeakers data forwarding (temporary)
+* ADDED TechSpeakers map visualization.
+* DOCS documented new API feature
+* DOCS updated example config
+
 ## 0.2.0
 2017/01/26: Major update, adds auto-deploy support, breaks up experiments into their own modular components, also adds initial portal module and various fixes.
 
