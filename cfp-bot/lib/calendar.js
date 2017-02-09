@@ -27,6 +27,8 @@ const DAYS_OF_WEEK = [
 function updateCfpData() {
   return new Promise( (resolve, reject) => {
     ical.fromURL(CFP_CALENDAR_URL, {}, (err, data) => {
+      if (err) reject(err);
+
       let events = Object.keys(data).map(k => (
         Object.assign({ id:k }, data[k])
       ));
