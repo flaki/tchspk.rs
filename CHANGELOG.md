@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2
+2017/02/09: Basic portal support for the TechSpeakers CFP calendar.
+
+* ADDED `/cfp` on the portal to display upcoming CFP deadlines
+* FIXED no longer swallowing CFP calendar update network & parse errors
+
 ## 0.2.1
 2017/01/26: API support in the portal, integrated @Mte90's TechSpeakers Map.
 
