@@ -20,6 +20,10 @@ app.use(require('./api'));
 app.get('/version', require('./routes/version.js').all);
 
 
+// CFP Calendar landing
+app.get('/cfp', require('./routes/cfp.js').all);
+
+
 // Serve static files
 app.use(express.static(CFG.WEB_DIR, { maxAge: 60*60*1000 }));
 

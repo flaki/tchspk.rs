@@ -1,0 +1,61 @@
+body {
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 3vw;
+
+  background-image: url(/img/mtscfps.png);
+  background-position: top center;
+  background-color: #0ac;
+  color: white;
+
+  background-size: 20vh 20vh;
+  background-repeat: no-repeat;
+  padding-top: 20vh;
+
+  display: flex;
+  justify-content: center;
+}
+@media (max-width: 640px) {
+  body {
+    font-size: 1rem;
+  }
+}
+
+body {
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+li {
+  display: flex;
+  flex-direction: row;
+
+  line-height: 1.2;
+  margin-bottom: .5em;
+}
+
+.dt {
+  flex: 0 0 5em;
+}
+
+
+@media (max-width: 24rem) {
+li {
+  flex-direction: column;
+  margin-bottom: 1em;
+}
+.dt {
+  flex: 0;
+  font-weight: bold;
+}
+}
+
+
+li a {
+  color: white;
+  text-decoration: none;
+}
+li a:hover, li a:focus, li a:active {
+  color: #fa0;
+}
