@@ -42,7 +42,7 @@ function updateCfpData() {
 }
 
 function getCfpDataSync(now) {
-  return parseExtraFields(require(CFP_JSON_PATH), now);
+  return parseExtraFields(JSON.parse(fs.readFileSync(CFP_JSON_PATH,'utf-8').toString()), now);
 }
 
 function listUpcomingCfps(now) {
