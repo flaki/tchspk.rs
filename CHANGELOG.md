@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3
+2017/02/17: CFP data updates & portal calendar fixes.
+
+* ADDED portal `/cfp` caching & forced updates via `?update=1`
+* FIXED calendar.js JSON loading
+
 ## 0.2.2
 2017/02/09: Basic portal support for the TechSpeakers CFP calendar.
 
