@@ -1,6 +1,6 @@
 body {
   font-family: 'Open Sans Condensed', sans-serif;
-  font-size: 3vw;
+  font-size: 1rem;
 
   background-image: url(/img/mtscfps.png);
   background-position: top center;
@@ -14,9 +14,13 @@ body {
   display: flex;
   justify-content: center;
 }
-@media (max-width: 640px) {
+@media (min-width: 640px) {
   body {
-    font-size: 1rem;
+    font-size: 3vw;
+  }
+  ul {
+    width: 24em;
+    max-width: 90vw;
   }
 }
 
