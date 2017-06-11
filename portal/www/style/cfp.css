@@ -12,7 +12,8 @@ body {
   padding-top: 20vh;
 
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 @media (min-width: 640px) {
   body {
@@ -56,10 +57,23 @@ li {
 }
 
 
-li a {
+a {
   color: white;
   text-decoration: none;
 }
-li a:hover, li a:focus, li a:active {
+a:hover, a:focus, a:active {
   color: #fa0;
+}
+
+
+.twitter-channel {
+  font-size: .66em;
+  padding: 1.5em;
+  margin-top: -3em;
+  font-style: italic;
+}
+.twitter-channel svg {
+  display: inline;
+  height: 1.5em;
+  vertical-align: bottom;
 }
