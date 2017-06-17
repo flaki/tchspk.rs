@@ -1,7 +1,10 @@
 'use strict';
 
+require('./lib/polyfills')
+
 const fs = require('fs')
 const path = require('path')
+const dates = require('./lib/dates')
 
 //const activities = require('./lib/activity-calendar')
 
@@ -26,8 +29,6 @@ try {
 
 let activities
 
-// Object.values minipolyfill
-Object.values = Object.values || (obj => Object.keys(obj).map(k => obj[k]))
 activities = Object.values(caldata)
 
 // Dates to timestamps
@@ -40,11 +41,15 @@ activities.forEach(r => {
 activities = activities.map(r => {
   let { uid, summary, location, ts_start, ts_end } = r
 
+  const days = (ts_end-ts_start)/dates.A_DAY
+
   return {
     id: uid,
     summary, location, start: ts_start, end: ts_end,
     year: new Date(ts_start).getFullYear(),
-    date: getUTCDate(ts_start),
+    days: days,
+    date: dates.getUTCDate(ts_start),
+    enddate: days > 1 ? dates.getUTCDate(ts_end-1) : undefined,
   }
 })
 
@@ -118,30 +123,3 @@ console.log('\nSuccessfully parsed:', activities.filter(r => r.name.length && r.
 
 fs.writeFileSync(ACTIVITIES_JSON, JSON.stringify(activities, null, 2))
 fs.writeFileSync(ACTIVITIES_TSV, `date\ttechspeakers\tevent\n${tsv}`)
-
-
-
-function getUTCDate(ts, sep = '-') {
-  let ret = ''
-  let today = new Date(), now
-
-  if (ts === undefined || ts === 'today') {
-    now = today
-  } else if (ts === 'yesterday') {
-    now = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()-1)
-  } else if (ts === 'tomorrow') {
-    now = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()+1)
-  } else {
-    now = new Date(ts)
-  }
-
-  let y = now.getUTCFullYear(),
-      m = now.getUTCMonth()+1,
-      d = now.getUTCDate()
-
-  ret += y + (sep||'')
-  ret += (m < 10 ? '0' : '') + m + (sep||'')
-  ret += (d < 10 ? '0' : '') + d
-
-  return ret
-}
