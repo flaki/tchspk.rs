@@ -1,20 +1,17 @@
 'use strict';
 
-const ical = require('ical');
-const fs = require('fs');
-const path = require('path');
+const ical = require('ical')
+const fs = require('fs')
+const path = require('path')
+const jsonfile = require('jsonfile')
 
-const CFG = require('../cfg');
+const CFG = require('../cfg')
 
-//const dates = require('./dates');
-
-
-
+const dates = require('./dates')
 
 
-// TODO: move the calendar url to config.json
-const CFP_CALENDAR_URL = 'https://calendar.google.com/calendar/ical/mozilla.com_tptb36ac7eijerilfnf6c1onfo%40group.calendar.google.com/public/basic.ics';
-const CFP_JSON_PATH = path.join(CFG.ROOT_DIR, 'data/cfp.json');
+// TODO: generalize, make configurable (e.g. via instance)
+let CALENDAR_JSON_PATH = path.join(CFG.ROOT_DIR, 'data/activities.json')
 
 const MONTHS = [
   'Jan', 'Feb', 'Mar',
@@ -28,44 +25,61 @@ const DAYS_OF_WEEK = [
 ];
 
 
-function updateCfpData() {
+function updateCalendarData() {
   return new Promise( (resolve, reject) => {
-    ical.fromURL(CFP_CALENDAR_URL, {}, (err, data) => {
-      if (err) reject(err);
+    ical.fromURL(CFG.ACTIVITIES.GCAL_URL_ACTIVITIES, {}, (err, data) => {
+      // Error reading the calendar ICS
+      if (err) {
+        reject(err)
+      }
 
+      // Create event object
       let events = Object.keys(data).map(k => (
         Object.assign({ id:k }, data[k])
       ));
 
       // Add extra fields
-      events = parseExtraFields(events);
+      events = parseExtraFields(events)
 
-      fs.writeFile(CFP_JSON_PATH, JSON.stringify(events, null, 2), _ => resolve(events));
+      // Write object to JSON path and resolve with event data when writing is finished
+      fs.writeFile(CALENDAR_JSON_PATH, JSON.stringify(events, null, 2), _ => resolve(events))
     });
   });
 }
 
-function getCfpDataSync(now) {
-  return parseExtraFields(JSON.parse(fs.readFileSync(CFP_JSON_PATH,'utf-8').toString()), now);
+function getCalendarData(now) {
+  return new Promise( (resolve, reject) => {
+      jsonfile.readFile(CALENDAR_JSON_PATH, (err, json) => {
+        if (err) {
+          reject(err)
+        }
+        resolve(json)
+      })
+    })
+    .then(json => parseExtraFields(json, now) )
 }
 
-function listUpcomingCfps(now) {
-  let cfp = getCfpDataSync(now);
+function getCalendarDataSync(now) {
+  return parseExtraFields(JSON.parse(fs.readFileSync(CALENDAR_JSON_PATH,'utf-8').toString()), now)
+}
+
+function listUpcoming(now) {
+  let events = getCalendarDataSync(now);
   let dayOfWeek = dates.getDayOfWeek(now);
 
 
-  cfp = cfp
+  events = events
     .filter(e => e.tsdiff>-1000*24*60*60)
     .map(e => Object.assign(e, { parsed: parseEvent(e) }))
-  cfp.sort( (a,b) => a.ts-b.ts );
+  events.sort( (a,b) => a.ts-b.ts );
 
-  cfp.forEach(e => {
+  events.forEach(e => {
     console.log(`[${e.daysToGoStr}]  ${e.summary}`);
   });
 
-  let today = cfp.filter(e => e.daysToGo === 0);
-  let tomorrow = cfp.filter(e => e.daysToGo === 1);
-  let thisweek = cfp.filter(e => e.daysToGo <= (7-dayOfWeek));
+  let today = events.filter(e => e.daysToGo === 0);
+  let tomorrow = events.filter(e => e.daysToGo === 1);
+  let thisweek = events.filter(e => e.daysToGo <= (7-dayOfWeek));
 
 
   // Find a highlighted event
@@ -115,7 +129,7 @@ function listUpcomingCfps(now) {
 
 
   return ({
-    upcoming: cfp,
+    upcoming: events,
     today, tomorrow, thisweek,
     highlights,
     feed,
@@ -227,9 +241,11 @@ function formatEvent(e) {
 
 
 module.exports = {
-//  updateCfpData,
-//  getCfpDataSync,
-//  listUpcomingCfps,
+  updateCalendarData,
+
+  getCalendarData,
+  getCalendarDataSync,
+//  listUpcoming,
 //  weekday,
 //  parseEvent, formatEvent
 };

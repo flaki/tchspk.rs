@@ -7,7 +7,11 @@ const aDay = 24*60*60*1000
 module.exports = {
   A_DAY: aDay,
 
+  getDayOfWeek,
   getUTCDate,
+  dayStartUTC,
+  dateTimeUTC,
+
   dateInterval,
   dateFilterComprehension,
   theDayOf,
@@ -41,6 +45,38 @@ function getUTCDate(ts, sep = '-') {
   ret += (d < 10 ? '0' : '') + d
 
   return ret
+}
+
+// Returns UTC Day of Week, Mo: 1, Su: 7
+function getDayOfWeek(ts) {
+  let d = ts ? new Date(ts) : new Date
+
+  return (d.getUTCDay()+6) % 7 +1
+}
+
+// Returns the UTC timestamp for the start of the specified date
+function dayStartUTC(date) {
+  if (typeof date !== 'object' || !'getUTCFullYear' in date) {
+    date = new Date(date)
+  }
+
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+}
+
+function dateTimeUTC(date, y,m,d, h,i,s) {
+  if (!date) date = new Date();
+  if (typeof date !== 'object' || !'getUTCFullYear' in date) {
+    date = new Date(date)
+  }
+
+  return Date.UTC(
+    y !== undefined ? y : date.getUTCFullYear(),
+    m !== undefined ? m : date.getUTCMonth(),
+    d !== undefined ? d : date.getUTCDate(),
+    h !== undefined ? h : date.getUTCHours(),
+    i !== undefined ? i : date.getUTCMinutes(),
+    s !== undefined ? s : date.getUTCSeconds()
+  )
 }
 
 // Returns a function object suitable to be used in [].filter where

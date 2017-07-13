@@ -21,6 +21,7 @@ CFG.DIST = (process.argv.indexOf("--dist") >= 0);
 // App directories
 CFG.ROOT_DIR = path.normalize( __dirname + '/..' );
 CFG.APP_DIR = __dirname;
+CFG.DATA_DIR = path.join(CFG.ROOT_DIR, 'data');
 
 
 // CFP calendar bot persistence file paths
