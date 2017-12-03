@@ -45,6 +45,7 @@ function all(req, res) {
   cfpdata.then(cal => {
     let data = {
       title: 'Upcoming CFP Deadlines - TechSpeakers CFP Calendar',
+      head: '  <meta name="viewport" content="width=device-width, initial-scale=1">',
       body: '<ul>'+cal.upcoming.map(e => {
         let event = e.parsed.url && e.parsed.url.length ? `<a href="${e.parsed.url[0]}" target="_blank">${e.summary}</a>` : e.summary;
         return `<li><div class="dt">${e.daysToGoStr}</div> <div class="t">${event}</div></li>`
