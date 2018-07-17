@@ -16,6 +16,7 @@ const cors = require('cors');
 
 const fetch = require('node-fetch');
 
+const mapdata = JSON.parse(require('fs').readFileSync(__dirname+'/../data/mapapi.json').toString());
 
 // API server
 const api = express();
@@ -29,7 +30,10 @@ api.get('/'+(CFG.API_VERSION||'1.0')+'/techspeakers/public', function(req, res) 
   .then(r => r.json())
   .then(r => {
     console.log('[%s API] %s OK', CFG.APP_NAME, req.path)
-    res.json(r)
+    let map = mapdata.concat(r.speakers.filter(ex => {
+      return mapdata.filter(md => md.name === ex.name && md.lat).length === 0
+    })).filter(e => e.lat&&e.lng)
+    res.json({ speakers: map })
   });
 });
 
