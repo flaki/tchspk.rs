@@ -7,6 +7,8 @@
     "serve:cfp-bot": "node cfp-bot/app.js",
     "serve:portal": "node portal/app.js",
     "start": "node startup.js",
+    "activity-dates": "node ts-activities/testdates",
+    "test-elastic": "node ts-activities/elastic",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

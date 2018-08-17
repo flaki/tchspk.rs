@@ -59,3 +59,25 @@ li a {
 li a:hover, li a:focus, li a:active {
   color: #fa0;
 }
+
+/* Experimental new style for the conference date/location */
+.t a>i {
+  font-style: normal;
+  display: block;
+  margin-top: -.15em;
+  font-weight: 100;
+  font-size: .7em;
+  text-indent: -.25em; overflow: hidden;
+}
+
+/* Old style recreated */
+.t a>i {
+  font-size: inherit;
+  display: inline;
+}
+.t a>i::before {
+  content: '(';
+}
+.t a>i::after {
+  content: ')';
+}

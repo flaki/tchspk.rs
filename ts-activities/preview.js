@@ -9,7 +9,7 @@ function preview(criteria) {
     filterCondition = JSON.parse(criteria)
   } catch(e) {
     console.log(e)
-    filterCondition = criteria;
+    filterCondition = criteria||'';
   }
 
   let items = jsonfile.readFileSync('./data/ts/activities.json')
@@ -23,7 +23,7 @@ function preview(criteria) {
       meta += activity.days+' days'
     }
 
-    if (activity.location.trim()) {
+    if (activity.location && activity.location.trim()) {
       meta = (meta ? meta+', ' : '') + activity.location.trim()
     }
 
