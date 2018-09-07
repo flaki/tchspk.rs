@@ -16,8 +16,38 @@ module.exports = {
   dateFilterComprehension,
   theDayOf,
   theWeekOf,
+
+  formatDate,
+  weekday,
 }
 
+
+
+const MONTHS = [
+  'Jan', 'Feb', 'Mar',
+  'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep',
+  'Oct', 'Nov', 'Dec'
+];
+
+// Format date in a form of MON/DD (e.g. Aug/12)
+function formatDate(d) {
+  let date = new Date(d);
+
+  let mo = MONTHS[date.getMonth()];
+  let day = (date.getDate()<10 ? '0' : '') + date.getDate();
+
+  return mo+'/'+day;
+}
+
+
+const DAYS_OF_WEEK = [
+  'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'
+];
+
+function weekday(d) {
+  return DAYS_OF_WEEK[d];
+}
 
 
 // Formats a date to a string in the format of YYYY-MM-DD

@@ -20,6 +20,12 @@ const ACTIVITIES_TSV = path.join(CFG.ROOT_DIR, 'data/ts/activities.tsv')
 let WORD_SKIP_LIST = null
 
 
+function from(calData) {
+  return Promise.resolve(calendarActivities(calData))
+    .then(activities => processActivityData(activities))
+    .then(activities => exportActivityData(activities))
+}
+
 function data(update) {
   return (update ? calendar.updateCalendarData() : calendar.getCalendarData())
     .then(calData => calendarActivities(calData))
@@ -48,7 +54,7 @@ function debug() {
 if (require.main === module) {
   debug();
 } else {
-  module.exports = { data, debug }
+  module.exports = { from, data, debug }
 }
 
 

@@ -60,10 +60,11 @@ async function from(options) {
       if (cached.metadata.expiry < new Date().getTime()) throw new Error('Cache Entry Expired!')
 
       result = JSON.parse(cached.data.toString())
-      console.log(cached)
+      //console.log(cached)
     }
     catch(ex) {
-      console.log(ex)
+      //console.log(ex)
+      // todo: handle rejected promise (e.g. network error)
       result = await fromUrl(src)
 
       const expiry = new Date().getTime() + cacheTTL
@@ -117,7 +118,7 @@ function preprocessCalendarData(data) {
 
   // Extra fields
   // TODO: allow configuring extra parsers for custom parsing
-  events = parseExtraFields(events)
+  //events = parseExtraFields(events)
 
   // Write object to JSON path and resolve with event data when writing is finished
   //fs.writeFile(CALENDAR_JSON_PATH, JSON.stringify(events, null, 2), _ => resolve(events))
