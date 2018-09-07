@@ -15,15 +15,25 @@ module.exports = { es, init, index, search }
 async function init(index) {
   try {
     await es.ping({ requestTimeout: 1000 })
+  }
+  catch(e) {
+    console.trace('[ELASTIC] cluster seems to be down!', e);
+  }
 
+  try {
     await es.indices.delete({index})
-    await es.indices.create({
+  }
+  catch(err) {} // ignore failure if index did not exist
+
+  try {
+    await es.indices.create(
+      {
         index: INDEX_ID
       }
     )
   }
   catch(e) {
-    console.trace('[ELASTIC] cluster seems to be down!', e);
+    console.trace('[ELASTIC] failed to create index for `'+INDEX_ID+'`!', e);
   }
 }
 
