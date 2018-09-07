@@ -60,11 +60,11 @@ function displayList(items) {
 
 
 function displayTS(e) {
-  if (e.ts) {
+  if (e.ts.length) {
     let ret = e.ts.map(t => {
       let link = '#'
       if (t.twitter) link = 'https://twitter.com/'+t.twitter.replace('@','')
-      return `<a href="${link}">${t.displayname || t.name}</a>`
+      return `<a href="${link}"><strong>${t.displayname || t.name}</strong></a>`
     })
 
     return ret.join(', ')
