@@ -36,19 +36,23 @@ async function index(index, id, type, data) {
   })
 }
 
-async function search(query, maxhits = 10) {
+async function search(query, options) {
   if (typeof query === 'string') {
-    return await es.search({
-      index: INDEX_ID,
-      size: maxhits,
-      q: query
-    })
+    return await es.search(Object.assign(
+      {
+        index: INDEX_ID,
+        q: query
+      },
+      options
+    ))
 
   } else {
-    return await es.search({
-      index: INDEX_ID,
-      size: maxhits,
-      body: query
-    })
+    return await es.search(Object.assign(
+      {
+        index: INDEX_ID,
+        body: query
+      },
+      options
+    ))
   }
 }
