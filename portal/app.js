@@ -23,6 +23,10 @@ app.get('/version', require('./routes/version.js').all);
 // CFP Calendar landing
 app.get('/cfp', require('./routes/cfp.js').all);
 
+// Elastic
+app.get('/activities/upcoming', require('./routes/ts-activities-upcoming.js').all);
+app.get('/activities/upcoming', require('./routes/ts-activities-list.js').all);
+
 
 // Serve static files
 app.use(express.static(CFG.WEB_DIR, { maxAge: 60*60*1000 }));
