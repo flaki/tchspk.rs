@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>{{TITLE}}</title>
+
+  <link href="http://summerstyle.github.io/jsonTreeViewer/libs/app/reset.css" rel="stylesheet" />
+  <link href="http://summerstyle.github.io/jsonTreeViewer/libs/jsonTree/jsonTree.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet">
+  <script src="http://summerstyle.github.io/jsonTreeViewer/libs/jsonTree/jsonTree.js"></script>
+  <style>
+    body {
+      padding: 1em;
+    }
+    label, button {
+      display: block
+    }
+    input {
+      background: rgba(0,0,128,.1)
+    }
+    input, label, button, p {
+      margin-top: .25em;
+      margin-bottom: .25em;
+    }
+    h1 {
+      margin: 1em;
+      text-align: center;
+    }
+    h2, h3 {
+      margin-top: 2em;
+      margin-bottom: .5em;
+    }
+    a:link, a:visited {
+      color: #00aaff;
+    }
+  </style>
+  {{HEAD}}
+</head>
+
+<body>
+  <h1>Mozilla TechSpeakers API Console</h1>
+
+  <hr />
+
+  <h2>Public APIs</h2>
+
+  <h3>Public TechSpeaker list</h3>
+  <button name="techspeakers/public">show</button>
+
+  <hr />
+
+  <h2>Restricted APIs</h2>
+
+  <label>Access Token: <input type="text" name="access_token" size="32"></label>
+
+  <h3>TechSpeakers</h3>
+  <label>Search: <input type="text" name="ts_search" disabled /></label>
+  <button name="techspeakers">show</button>
+
+  <h3>Activities</h3>
+  <label>For: <select name="ts_select"><option value="">-</option>{{TS_OPTIONS}}</select></label>
+  <label>Custom query: <input type="text" name="activities_q" /></label>
+
+  <button name="activities">send</button>
+
+  <hr />
+
+  <h2>Call result</h2>
+
+  <p><strong>URL:</strong> <a target="_blank" name="api_url" href="#"></a></p>
+
+  <h3>JSON response:</h3>
+
+  <div id="wrapper">
+      <div id="tree"></div>
+  </div>
+
+  {{BODY}}
+
+  {{FOOT}}
+
+  <script>
+  (function(){
+  const treeWrapper = document.getElementById("tree");
+  const tree = jsonTree.create({}, treeWrapper);
+
+  let match
+  if (match = window.location.hash.match(/access_token=(\w+)/)) {
+    document.querySelector('input[name="access_token"]').value = match[1]
+  }
+
+  function expand() {
+    tree.expand();
+  }
+  function collapse() {
+    tree.collapse();
+  }
+  function load(json) {
+    let data
+
+    if (typeof json === 'object') {
+      data = json
+    } else {
+      try {
+        data = JSON.parse(json);
+      } catch(e) {
+        alert(e);
+      }
+    }
+
+    tree.loadData(data);
+  }
+
+  document.body.addEventListener('click', function(e) {
+    if (e.target.tagName === 'BUTTON') apiCall(e.target.name)
+  })
+
+  async function apiCall(endpoint) {
+    console.log(endpoint)
+
+    const params = Object.entries({
+      access_token: document.querySelector('[name="access_token"]').value || '',
+      //TODO: search: document.querySelector('[name="ts_search"]').value || '',
+      of: document.querySelector('[name="ts_select"]').value || '',
+      q: document.querySelector('[name="activities_q"]').value || '',
+    }).reduce((params, [k,v]) => {
+      if (v) params.append(k, v)
+      return params
+    }, new URLSearchParams())
+    console.log(params.toString())
+
+    const apiRequest = '/1.0/'+endpoint+'?'+params.toString()
+    const apiHost = window.location.protocol+'//api.'+window.location.host
+
+    const apiUrl = apiHost+apiRequest
+    const apiUrlLink = document.querySelector('[name="api_url"]')
+
+    apiUrlLink.innerText = apiUrlLink.href = apiUrl
+
+    const response = await fetch(apiUrl)
+    const res = await response.json()
+
+    console.log(res)
+    load(res)
+  }
+  })()
+  </script>
+</body>
+</html>

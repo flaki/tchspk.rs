@@ -11,9 +11,13 @@ const express = require('express');
 
 const app = express();
 
+// Enable local reverse-proxy support - https://expressjs.com/en/guide/behind-proxies.html
+app.set('trust proxy', 'loopback')
+
 
 // Portal modules - API
-app.use(require('./api'));
+const api = require('./api');
+app.use(api);
 
 
 // Print app version
@@ -26,6 +30,9 @@ app.get('/cfp', require('./routes/cfp.js').all);
 // Elastic
 app.get('/activities/upcoming', require('./routes/ts-activities-upcoming.js').all);
 app.get('/activities/upcoming', require('./routes/ts-activities-list.js').all);
+
+// API console
+app.get('/api/console', require('./routes/api-console.js').all);
 
 
 // Serve static files

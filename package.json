@@ -34,6 +34,6 @@
     "stream-buffers": "^3.0.1",
     "string-similarity": "^1.2.0",
     "twitter": "^1.7.1",
-    "vhost": "^3.0.2"
+    "vhost": "flaki/vhost"
   }
 }

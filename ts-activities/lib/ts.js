@@ -12,8 +12,12 @@ let map = new Map()
 load()
 
 
-module.exports = { find }
+module.exports = { find, [Symbol.iterator]: list }
 
+
+function* list () {
+  for (let i of db) yield Object.assign({}, i)
+}
 
 function load() {
   try {
@@ -36,6 +40,7 @@ function remap() {
 
     // Map to name
     map.set(i.name, i)
+    map.set(i.name.toLowerCase(), i)
     // TODO: map without accents & lowercase
 
     // Map to aliases
@@ -46,5 +51,5 @@ function remap() {
 }
 
 function find(i) {
-  return map.get(i)
+  return map.get(i) || map.get(String(i).toLowerCase())
 }
